@@ -1,81 +1,97 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import axios from 'axios';
 
 const App = () => {
 
-    const [getData, setGetData] = useState({})
-
+    const [getData, setGetData] = useState([])
 
 
     const dataToPost = {
-        id: 1,
-        title: 'Hello World',
-        body: 'Something.....'
+        id: 15,
+        name: "afdnjasfd",
+        username: 'asdasdm'
     }
 
-    const dataToPut = {
-        id: 2,
-        title: 'Smth...',
-        body: 'Lorem'
+    const dataToEdit = {
+        name: "afdnjasfd",
     }
-
 
     const dataToPatch = {
-        title: 'Smth...'
+        name: 'Smth...'
+    }
+
+    
+    useEffect(() => {
+        axios.get('https://jsonplaceholder.typicode.com/users')
+            .then((res) => setGetData(res.data))
+            .catch((err) => console.log(err))
+    }, [])
+
+
+    function handleDelete(id){
+        axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
+            .then(() => setGetData(prevData => prevData.filter(user => user.id !== id)))
+            .catch((err) => console.log(err))
+    }
+
+    function handlePost(){
+        axios.post('https://jsonplaceholder.typicode.com/users', dataToPost)
+            .then((res) => setGetData(prevData => [...prevData, res.data]))
+            .catch((err) => console.log(err))
     }
 
 
-
-
-    
-    
-    
-    
-    useEffect(() => {
-
-        axios.get('https://jsonplaceholder.typicode.com/posts/1')
-        .then((res) => setGetData(res.data))
-        .catch((err) => {
-            console.error('Error fetching posts', err);
-        });
-
-        axios.post('https://jsonplaceholder.typicode.com/posts', dataToPost)
-            .then(response => {
-                console.log('Data created successfully:', response.data);
+    function handleEdit(id){
+        axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, dataToEdit)
+            .then(res => {
+                setGetData(prevData => {
+                    return prevData.map(user =>{
+                        if (user.id === id) {
+                            return {...res.data}
+                        }
+                        return user
+                    })
+                })
             })
-            .catch(error => {
-                console.error('Error creating data:', error);
-            });
+            .catch((err) => console.log(err))
 
-        axios.delete('https://jsonplaceholder.typicode.com/posts/1')
-            .then((res) => console.log('Successfully deleted data', res.data))
-            .catch((err) => console.log('Error', err))
-    
-    
-        axios.put('https://jsonplaceholder.typicode.com/posts/2', dataToPut)
-            .then((res) => console.log('Successfully updated data', res.data))
-            .catch((err) => console.log('Error', err))
-    
-    
-    
-        axios.patch('https://jsonplaceholder.typicode.com/posts/3', dataToPatch)
-            .then((res) => console.log('Successfully patched data', res.data))
-            .catch((err) => console.log('Error', err))
-            
-    }, []);
+    }
 
 
+    function handlePatch(id){
+        axios.patch(`https://jsonplaceholder.typicode.com/users/${id}`, dataToPatch)
+        .then(res => {
+            setGetData(prevData => {
+                return prevData.map((user) => {
+                    if (user.id === id){
+                        return {...res.data}
+                    }
+                    return user
+                })
+            })
+        })
+        .catch((err) => console.log(err))
 
-
+    }
 
 
 
     return (
         <>
             <div>
+                {
+                    getData.map((user) => (
+                        <div key={user.id}>
+                            <h1>{user.name}</h1>
+                            <p>{user.username}</p>
+                        </div>
+                    ))
+                }
                 <div>
-                    <h3>{getData.title}</h3>
-                    <p>{getData.body}</p>
+                    <button onClick={handlePost}>POST</button>
+                    <button onClick={() => handleEdit(5)}>EDIT</button>
+                    <button onClick={() => handleDelete(1)}>DELETE</button>
+                    <button onClick={() => handlePatch(6)}>PATCH</button>
                 </div>
             </div>
 
