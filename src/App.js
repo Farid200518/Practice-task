@@ -27,7 +27,18 @@ const App = () => {
 
 
 
+    
+    
+    
+    
     useEffect(() => {
+
+        axios.get('https://jsonplaceholder.typicode.com/posts/1')
+        .then((res) => setGetData(res.data))
+        .catch((err) => {
+            console.error('Error fetching posts', err);
+        });
+
         axios.post('https://jsonplaceholder.typicode.com/posts', dataToPost)
             .then(response => {
                 console.log('Data created successfully:', response.data);
@@ -35,40 +46,27 @@ const App = () => {
             .catch(error => {
                 console.error('Error creating data:', error);
             });
-    }, [])
 
-
-
-
-    useEffect(() => {
-        axios.get('https://jsonplaceholder.typicode.com/posts/1')
-            .then((res) => setGetData(res.data))
-            .catch((err) => {
-                console.error('Error fetching posts', err);
-            });
+        axios.delete('https://jsonplaceholder.typicode.com/posts/1')
+            .then((res) => console.log('Successfully deleted data', res.data))
+            .catch((err) => console.log('Error', err))
+    
+    
+        axios.put('https://jsonplaceholder.typicode.com/posts/2', dataToPut)
+            .then((res) => console.log('Successfully updated data', res.data))
+            .catch((err) => console.log('Error', err))
+    
+    
+    
+        axios.patch('https://jsonplaceholder.typicode.com/posts/3', dataToPatch)
+            .then((res) => console.log('Successfully patched data', res.data))
+            .catch((err) => console.log('Error', err))
+            
     }, []);
 
 
 
-    useEffect(() => {
-        axios.delete('https://jsonplaceholder.typicode.com/posts/1')
-            .then((res) => console.log('Successfully deleted data', res.data))
-            .catch((err) => console.log('Error', err))
-    }, [])
 
-
-    useEffect(() => {
-        axios.put('https://jsonplaceholder.typicode.com/posts/2', dataToPut)
-            .then((res) => console.log('Successfully updated data', res.data))
-            .catch((err) => console.log('Error', err))
-    }, [])
-
-
-    useEffect(() => {
-        axios.patch('https://jsonplaceholder.typicode.com/posts/3', dataToPatch)
-            .then((res) => console.log('Successfully patched data', res.data))
-            .catch((err) => console.log('Error', err))
-    }, [])
 
 
 
