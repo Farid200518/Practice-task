@@ -20,7 +20,7 @@ const App = () => {
         name: 'Smth...'
     }
 
-    
+
     useEffect(() => {
         axios.get('https://jsonplaceholder.typicode.com/users')
             .then((res) => setGetData(res.data))
@@ -28,26 +28,26 @@ const App = () => {
     }, [])
 
 
-    function handleDelete(id){
+    function handleDelete(id) {
         axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
             .then(() => setGetData(prevData => prevData.filter(user => user.id !== id)))
             .catch((err) => console.log(err))
     }
 
-    function handlePost(){
+    function handlePost() {
         axios.post('https://jsonplaceholder.typicode.com/users', dataToPost)
             .then((res) => setGetData(prevData => [...prevData, res.data]))
             .catch((err) => console.log(err))
     }
 
 
-    function handleEdit(id){
+    function handleEdit(id) {
         axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, dataToEdit)
             .then(res => {
                 setGetData(prevData => {
-                    return prevData.map(user =>{
+                    return prevData.map(user => {
                         if (user.id === id) {
-                            return {...res.data}
+                            return { ...res.data }
                         }
                         return user
                     })
@@ -58,19 +58,19 @@ const App = () => {
     }
 
 
-    function handlePatch(id){
+    function handlePatch(id) {
         axios.patch(`https://jsonplaceholder.typicode.com/users/${id}`, dataToPatch)
-        .then(res => {
-            setGetData(prevData => {
-                return prevData.map((user) => {
-                    if (user.id === id){
-                        return {...res.data}
-                    }
-                    return user
+            .then(res => {
+                setGetData(prevData => {
+                    return prevData.map((user) => {
+                        if (user.id === id) {
+                            return { ...res.data }
+                        }
+                        return user
+                    })
                 })
             })
-        })
-        .catch((err) => console.log(err))
+            .catch((err) => console.log(err))
 
     }
 
@@ -79,19 +79,23 @@ const App = () => {
     return (
         <>
             <div>
+                <button onClick={handlePost} style={{
+                    marginTop: '20px'
+                }}>POST</button>
                 {
                     getData.map((user) => (
                         <div key={user.id}>
                             <h1>{user.name}</h1>
                             <p>{user.username}</p>
+                            <button onClick={() => handleEdit(user.id)}>EDIT</button>
+                            <button onClick={() => handleDelete(user.id)}>DELETE</button>
+                            <button onClick={() => handlePatch(user.id)}>PATCH</button>
                         </div>
                     ))
                 }
                 <div>
-                    <button onClick={handlePost}>POST</button>
-                    <button onClick={() => handleEdit(5)}>EDIT</button>
-                    <button onClick={() => handleDelete(1)}>DELETE</button>
-                    <button onClick={() => handlePatch(6)}>PATCH</button>
+
+
                 </div>
             </div>
 
