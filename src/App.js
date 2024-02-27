@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useSyncExternalStore } from 'react';
+import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 
 const App = () => {
 
     const [getData, setGetData] = useState([])
+    const [id, setId] = useState(0)
 
 
     const dataToPost = {
-        id: 15,
+        id: 10,
         name: "afdnjasfd",
         username: 'asdasdm'
     }
 
     const dataToEdit = {
-        name: "afdnjasfd",
+        name: " erf",
     }
 
     const dataToPatch = {
@@ -36,7 +37,12 @@ const App = () => {
 
     function handlePost() {
         axios.post('https://jsonplaceholder.typicode.com/users', dataToPost)
-            .then((res) => setGetData(prevData => [...prevData, res.data]))
+            .then((res) => {
+                res.data.id += id
+                console.log(getData)
+                setId(id+1)
+                setGetData(prevData => [...prevData, res.data])
+            })            
             .catch((err) => console.log(err))
     }
 
@@ -64,7 +70,7 @@ const App = () => {
                 setGetData(prevData => {
                     return prevData.map((user) => {
                         if (user.id === id) {
-                            return { ...res.data }
+                            return { ...user, ...res.data }
                         }
                         return user
                     })
@@ -79,12 +85,10 @@ const App = () => {
     return (
         <>
             <div>
-                <button onClick={handlePost} style={{
-                    marginTop: '20px'
-                }}>POST</button>
+
                 {
-                    getData.map((user) => (
-                        <div key={user.id}>
+                    getData.map((user, i) => (
+                        <div key={i}>
                             <h1>{user.name}</h1>
                             <p>{user.username}</p>
                             <button onClick={() => handleEdit(user.id)}>EDIT</button>
@@ -94,7 +98,9 @@ const App = () => {
                     ))
                 }
                 <div>
-
+                    <button onClick={handlePost} style={{
+                        marginTop: '20px'
+                    }}>POST</button>
 
                 </div>
             </div>
